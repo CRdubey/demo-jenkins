@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+     environment {
+       name = 'chanchal'
+    }
+      parameters {
+        string(name: 'person', defaultValue: 'chanchal', description: 'hey its me')
+        booleanParam(name: 'male', defaultValue: true, description: 'gender is imp')
+        choice(name: 'city', choices: ['wardha', 'nagpur', 'mumbai'], description: 'city is imp')
+    }
+    stages {
+        stage('run a command') {
+            steps {
+                sh '''
+                date
+                pwd
+                echo "hello wardha"
+                '''
+            }
+        }
+        stage('Environment Variables') {
+            environment {
+              username = 'mystudent'
+        }
+            steps {
+                sh 'echo "${BUILD_ID}"'
+                sh 'echo "${name}"'
+                sh 'echo "${username}"'
+            }
+        }
+        stage('parameters') {
+            steps {
+                sh 'echo "${person}"'
+                sh 'echo "${male}"'
+                sh 'echo "${city}"'
+            }
+        }
+        stage('continue ?') {
+            input {
+                message "should we continue?"
+                ok "yes we contunue"
+            }
+            steps {
+                echo 'we are deploying to prod'
+            }
+        }
+        stage('prod') {
+            steps {
+                echo 'Hello World4'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'This post-build step will always run'
+        }
+        
+        success {
+            echo 'This post-build step will only run on successful build'
+        }
+        
+        failure {
+            echo 'This post-build step will only run on failed build'
+        }
+    }
+}
